@@ -59,7 +59,7 @@ inputUsd.addEventListener('input', () => {
     catchData()
             .then(response => {
                 let data = JSON.parse(response);
-                inputUah.value = inputUsd.value * data;
+                inputUah.value = inputUsd.value * data.usd;
             })
             .catch(() => inputUah.value = "Что-то пошло не так");
 });
