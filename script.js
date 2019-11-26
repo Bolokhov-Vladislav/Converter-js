@@ -1,41 +1,65 @@
-let options = {
-    width: 1366,
-    height: 768,
-    background: 'red',
-    font: {
-        size: '16px',
-        color: '#fff'
-    }
-};
-console.log(JSON.stringify(options));// send to server
-console.log(JSON.parse(JSON.stringify(options)));
-///////////////////////////////////////////////////////
 
-let inpitUah = document.getElementById('uah'),
+let inputUah = document.getElementById('uah'),
     inputUsd = document.getElementById('usd');
 
-inpitUah.addEventListener('input', ()=> {
-    let request = new XMLHttpRequest();
+inputUah.addEventListener('input', () => {
 
-    // request.open(method, url, async, login. pass);
+    function catchData() {
 
-    request.open('GET', 'current.json');
-    request.setRequestHeader('Content-type', 'aplicationo/json; charset=utf-8');
-    request.send();
+        return new Promise(function(resolve, reject){
+            let request = new XMLHttpRequest();
+            request.open("GET", "current.json");
+            request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            request.send();
+        
+            request.onload = function() {
+                if(request.readyState === 4) {
+                    if(request.status == 200) {
+                        resolve(this.response);
+                    }
+                    else {
+                        reject();
+                    }
+                }
+            };
+        });
+    }
 
-    //методы запроса
-    //status 
-    //statusText
-    //responseText / response
-    //readyState (4 - done)
+    catchData()
+            .then(response => {
+                let data = JSON.parse(response);
+                inputUsd.value = inputUah.value / data.usd;
+            })
+            .catch(() => inputUsd.value = "Что-то пошло не так");
+});
 
-    request.addEventListener('readystatechange', function() {
-        if (request.readyState === 4 && request.status == 200) {
-            let data = JSON.parse(request.response);// response - это все данные полученные с сервера
+inputUsd.addEventListener('input', () => {
 
-            inputUsd.value = inpitUah.value / data.usd;
-        } else {
-            inputUsd.value = "error";
-        }
-    });
+    function catchData() {
+
+        return new Promise(function(resolve, reject){
+            let request = new XMLHttpRequest();
+            request.open("GET", "current.json");
+            request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+            request.send();
+        
+            request.onload = function() {
+                if(request.readyState === 4) {
+                    if(request.status == 200) {
+                        resolve(this.response);
+                    }
+                    else {
+                        reject();
+                    }
+                }
+            };
+        });
+    }
+
+    catchData()
+            .then(response => {
+                let data = JSON.parse(response);
+                inputUah.value = inputUsd.value * data;
+            })
+            .catch(() => inputUah.value = "Что-то пошло не так");
 });
